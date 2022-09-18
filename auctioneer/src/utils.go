@@ -28,7 +28,6 @@ func getBidValue(bidderId int) BidResponse {
 	client := http.Client{
 		Timeout: 200 * time.Millisecond,
 	}
-	BIDDER_URL = "http://127.0.0.1:3000"
 	var b BidResponse
 	fmt.Println("Hitting:", BIDDER_URL+"/getBidPrice/"+strconv.Itoa(bidderId))
 	res, err1 := client.Get(BIDDER_URL + "/getBidPrice/" + strconv.Itoa(bidderId))
@@ -39,7 +38,9 @@ func getBidValue(bidderId int) BidResponse {
 	} else {
 		err := json.NewDecoder(res.Body).Decode(&b)
 		if err != nil {
-			fmt.Println("EROOO!")
+			fmt.Println("ERROR!")
+			b.BidderId = -1
+			b.Value = -1
 		}
 	}
 	return b

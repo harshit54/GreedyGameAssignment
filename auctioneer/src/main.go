@@ -16,7 +16,7 @@ var maxBidderId int
 
 func main() {
 	bidderIds = make(map[int]struct{})
-	BIDDER_URL = "http://127.0.0.1:3000"
+	BIDDER_URL = "http://10.5.0.5:3001"
 
 	router := mux.NewRouter()
 
@@ -24,14 +24,14 @@ func main() {
 	router.HandleFunc("/register/{BidderId}", register)
 	router.HandleFunc("/deregister/{BidderId}", deregister)
 
-	fs := http.FileServer(http.Dir("../swagger/"))
+	fs := http.FileServer(http.Dir("./swagger/"))
 	router.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", fs))
 
 	srv := &http.Server{
 		Handler: router,
-		Addr:    "127.0.0.1:8000",
+		Addr:    "0.0.0.0:3000",
 	}
 
-	fmt.Println("Starting Auctioneer Service At Port 8000")
+	fmt.Println("Starting Auctioneer Service At Port 3000")
 	log.Fatal(srv.ListenAndServe())
 }

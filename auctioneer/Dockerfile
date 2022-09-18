@@ -11,5 +11,6 @@ RUN go build -o ./bin/app ./src
 
 FROM debian:latest AS production
 COPY --from=builder app .
+COPY --from=builder /app/swagger .
 ENTRYPOINT ["app"]
 EXPOSE 8000

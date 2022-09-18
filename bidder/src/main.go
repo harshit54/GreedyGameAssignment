@@ -25,7 +25,10 @@ func addBidder(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err1.Error(), http.StatusBadRequest)
 		return
 	}
-	http.Get(AUCTIONEER_URL + "/register/" + strconv.Itoa(b.Id))
+	_, err := http.Get(AUCTIONEER_URL + "/register/" + strconv.Itoa(b.Id))
+	if err != nil {
+		fmt.Println("Error In Pinging Auctioner")
+	}
 	biddersData[b.Id] = b.Delay
 	fmt.Fprintln(w, strconv.Itoa(b.Id)+" Successfully Added!")
 	fmt.Println(strconv.Itoa(b.Id) + " Successfully Added!")
@@ -66,7 +69,7 @@ func getBidPrice(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	biddersData = make(map[int]int)
-	AUCTIONEER_URL = "http://127.0.0.1:8000"
+	AUCTIONEER_URL = "http://10.5.0.6:3000"
 
 	router := mux.NewRouter()
 
@@ -76,10 +79,10 @@ func main() {
 
 	srv := &http.Server{
 		Handler:      router,
-		Addr:         "127.0.0.1:3000",
+		Addr:         "0.0.0.0:3001",
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
-	fmt.Println("Starting Bidder Service At Port 3000")
+	fmt.Println("Starting Bidder Service At Port 3001")
 	log.Fatal(srv.ListenAndServe())
 }

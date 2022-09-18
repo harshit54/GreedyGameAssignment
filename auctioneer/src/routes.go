@@ -49,7 +49,7 @@ func startAuction(w http.ResponseWriter, req *http.Request) {
 	var wg sync.WaitGroup
 	var m sync.Mutex
 	wg.Add(len(bidderIds))
-	for id, _ := range bidderIds {
+	for id := range bidderIds {
 		go calculateMaxBid(id, &wg, &m)
 	}
 	wg.Wait()
