@@ -1,0 +1,2175 @@
+swagger: "2.0"
+info:
+  version: "1.0.1"
+  title: CurerTech API Access Layer
+# during dev, should point to your local machine
+host: localhost:5000
+# basePath prefixes all resource paths
+basePath: /api/v1
+#
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+  - multipart/form-data
+  - application/x-www-form-urlencoded
+# format of the responses to the client (Accepts)
+produces:
+  - application/msexcel
+  - text/csv
+  - application/zip
+  - application/json
+  - application/csv
+  - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+
+paths:
+  /swagger:
+    x-swagger-pipe: swagger_raw
+
+
+
+#####################################
+# Login APIs
+######################################
+
+  /common/login:
+    x-swagger-router-controller: common/login
+    post:
+      operationId: adminLogin
+      description: Returns Token Authentication on providing correct credentials
+      tags:
+      - Login
+      parameters:
+        - in: body
+          name: body
+          schema:
+            properties:
+              username:
+                type: string
+              password:
+                type: string
+            required:
+              - username
+              - password
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              token:
+                type: string
+
+  /common/patientByEmail:
+    x-swagger-router-controller: common/login
+    post:
+      operationId: findPatientByEmail
+      description: Return true if user by email exists
+      tags:
+      - Login
+      security:
+        - internalAuthentication: []
+      parameters:
+        - in: body
+          name: body
+          schema:
+            properties:
+              email:
+                type: string
+            required:
+              - email
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: object
+
+  /common/patientByMobile:
+    x-swagger-router-controller: common/login
+    post:
+      operationId: findPatientByMobile
+      description: Return true if user by mobile exists
+      tags:
+      - Login
+      security:
+        - internalAuthentication: []
+      parameters:
+        - in: body
+          name: body
+          schema:
+            properties:
+              mobile:
+                type: string
+            required:
+              - mobile
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: object
+
+  /common/createPatientUser:
+    x-swagger-router-controller: common/login
+    post:
+      operationId: createPatientUser
+      description: Return output of patient user creation
+      tags:
+      - Login
+      security:
+        - internalAuthentication: []
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: object
+
+  #####################################
+  # Doctor Intiated
+  ######################################
+  /hostInitiated/hdVoiceCall:
+    x-swagger-router-controller: doctorInitiated/hdCalls
+    post:
+      operationId: initiateHDVoiceCall
+      description: Doctor can make an HD Voice call using Agora
+      tags:
+      - DoctorApp
+      security:
+        - tokenAuthentication: []
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              participant_ispresent:
+                type: string
+              channel_id:
+                type: string
+
+  /hostInitiated/druginfo:
+    x-swagger-router-controller: doctorInitiated/otherFunctions
+    post:
+      operationId: mediceaCall
+      description: drug info
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+  /hostInitiated/hdVideoCall:
+    x-swagger-router-controller: doctorInitiated/hdCalls
+    post:
+      operationId: initiateHDVideoCall
+      description: Doctor can make an HD Voice call using Agora
+      tags:
+      - DoctorApp
+      security:
+        - tokenAuthentication: []
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              participant_ispresent:
+                type: string
+              channel_id:
+                type: string
+
+  /hostInitiated/findspecialist:
+    x-swagger-router-controller: doctorInitiated/appointmentFunctions
+    post:
+      operationId: FindSlotsOfSpecialistTypeOnDate
+      description: GP finds a specialist to give slot time
+      tags:
+      - DoctorApp
+      security:
+        - tokenAuthentication: []
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+  /hostInitiated/reschedule:
+    x-swagger-router-controller: doctorInitiated/appointmentFunctions
+    post:
+      operationId: rescheduleRequestSlots
+      description: reschedule slots request
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+  #####################################
+  # Doctor Intiated EndCalls
+  ######################################
+  /hostInitiated/endhdVoiceCall:
+    x-swagger-router-controller: doctorInitiated/hdCalls
+    post:
+      operationId: endHDVoiceCall
+      description: Doctor can end an HD Voice call using Agora
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              host_ispresent:
+                type: string
+
+
+  /hostInitiated/endhdVideoCall:
+    x-swagger-router-controller: doctorInitiated/hdCalls
+    post:
+      operationId: endHDVideoCall
+      description: Doctor can make an HD Voice call using Agora
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              host_ispresent:
+                type: string
+
+
+  #####################################
+  # Doctor Intiated Appointment Functions
+  ######################################
+  /hostInitiated/leaveAppointment:
+    x-swagger-router-controller: doctorInitiated/appointmentFunctions
+    post:
+      operationId: leaveAppointment
+      description: Doctor can Leave Appointment
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+
+  /hostInitiated/joinAppointment:
+    x-swagger-router-controller: doctorInitiated/appointmentFunctions
+    post:
+      operationId: joinAppointment
+      description: Doctor can join Appointment
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+              isHostFirstJoinee:
+                type: string
+
+  /hostInitiated/bookOfflineConsultation:
+    x-swagger-router-controller: doctorInitiated/appointmentFunctions
+    post:
+      operationId: bookOfflineConsultation
+      description: creates an offline consultation
+      security:
+        - tokenAuthentication: []
+      tags:
+        - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "201":
+          description: success
+          schema:
+            type: object
+        "500":
+          description: failure
+          schema:
+            type: object
+
+  /hostInitiated/markOfflinePaymentDone:
+    x-swagger-router-controller: doctorInitiated/appointmentFunctions
+    post:
+      operationId: markOfflinePaymentDone
+      description: marks offline consultation payment done
+      security:
+        - tokenAuthentication: []
+      tags:
+        - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "201":
+          description: success
+          schema:
+            type: object
+        "500":
+          description: failure
+          schema:
+            type: object
+
+  /hostInitiated/sendPaymentLink:
+    x-swagger-router-controller: doctorInitiated/appointmentFunctions
+    post:
+      operationId: sendPaymentLink
+      description: sends the dynamic link to payments page via sms
+      security:
+        - tokenAuthentication: []
+      tags:
+        - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "204":
+          description: success
+          schema:
+            type: object
+        "500":
+          description: failure
+          schema:
+            type: object
+  
+  /hostInitiated/remindPatientFollowUp:
+      x-swagger-router-controller: doctorInitiated/followUpFunctions
+      post:
+        operationId: remindPatientFollowUp
+        description: Send FollowUp Reminder SMS to Patient
+        security:
+          - tokenAuthentication: []
+        tags:
+          - DoctorApp
+          - DoctorDashboard
+        parameters:
+          - in: body
+            name: body
+            schema:
+              type: object
+              properties:
+                appointmentId:
+                  type: number
+            description: Send source_id of The Follow-Up Action Card
+        responses:
+          "200":
+            description: Success
+          "500":
+            description: Failure
+
+  #####################################
+  # Patient Intiated
+  ######################################
+  /patientInitiated/searchRankingsForDoctor:
+    x-swagger-router-controller: patientInitiated/searchRankings
+    get:
+      operationId: searchRankingsForDoctor
+      description: Modify Search Rankings for Doctor
+      security:
+        - tokenAuthentication: []
+      tags:
+        - Common
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: object
+        "500":
+          description: Failure
+          schema:
+            type: object
+
+  /participantInitiated/hdVoiceCall:
+    x-swagger-router-controller: patientInitiated/hdCalls
+    post:
+      operationId: initiateHDVoiceCall
+      description: Doctor can make an HD Voice call using Agora
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              host_ispresent:
+                type: string
+              channel_id:
+                type: string
+
+  /participantInitiated/hdVideoCall:
+    x-swagger-router-controller: patientInitiated/hdCalls
+    post:
+      operationId: initiateHDVideoCall
+      description: Doctor can make an HD Voice call using Agora
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              host_ispresent:
+                type: string
+              channel_id:
+                type: string
+  
+  /participantInitiated/getDiscountedAmount:
+    x-swagger-router-controller: patientInitiated/referralFunctions
+    post:
+      operationId: getDiscountedAmount
+      description: Patient can get final amount after getting discount.
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Internal Server Error
+
+  #####################################
+  # Patient Intiated End HD Calls
+  ######################################
+  /participantInitiated/endhdVoiceCall:
+    x-swagger-router-controller: patientInitiated/hdCalls
+    post:
+      operationId: endHDVoiceCall
+      description: Patient can end an HD Voice call using Agora
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              host_ispresent:
+                type: string
+              channel_id:
+                type: string
+
+  /participantInitiated/endhdVideoCall:
+    x-swagger-router-controller: patientInitiated/hdCalls
+    post:
+      operationId: endHDVideoCall
+      description: Patient can end an HD Voice call using Agora
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              host_ispresent:
+                type: string
+              channel_id:
+                type: string
+
+
+  #####################################
+  # Specialist type APIs
+  ######################################
+  /participantInitiated/specialistTypes:
+    x-swagger-router-controller: patientInitiated/specialistTypes
+    get:
+      operationId: typesDetails
+      description: Polling API to get the details
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              specialities:
+                type: string
+
+
+  #####################################
+  # Slots  APIs
+  ######################################
+  /participantInitiated/giveslots:
+    x-swagger-router-controller: patientInitiated/appointmentFunctions
+    post:
+      operationId: giveslots
+      description: Slots
+      security:
+        - tokenAuthentication: []
+        - internalAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+              booked_slots:
+                type: string
+              work_starttime:
+                type: string
+              work_endtime:
+                type: string
+  /participantInitiated/giveSlotsOffline:
+    x-swagger-router-controller: patientInitiated/appointmentFunctions
+    post:
+      operationId: giveSlotsOffline
+      description: Slots
+      security:
+        - tokenAuthentication: []
+        - internalAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+              booked_slots:
+                type: string
+              work_starttime:
+                type: string
+              work_endtime:
+                type: string
+
+  /participantInitiated/giveslotsweek:
+    x-swagger-router-controller: patientInitiated/appointmentFunctions
+    post:
+      operationId: giveNextSevenDaysSlots
+      description: Slots for seven days
+      security:
+        - tokenAuthentication: []
+        - internalAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+              booked_slots:
+                type: string
+              work_starttime:
+                type: string
+              work_endtime:
+                type: string
+  /participantInitiated/giveSlotsWeekOffline:
+    x-swagger-router-controller: patientInitiated/appointmentFunctions
+    post:
+      operationId: giveNextSevenDaysSlotsOffline
+      description: Slots for seven days
+      security:
+        - tokenAuthentication: []
+        - internalAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+              booked_slots:
+                type: string
+              work_starttime:
+                type: string
+              work_endtime:
+                type: string
+  #####################################
+  # Patient Initiated Filter Functions for Pre-Login
+  ######################################
+  /participantInitiated/filterByEmail:
+    x-swagger-router-controller: filterFunctions/filterByAuthenticatedParams
+    post:
+      operationId: filterByEmail
+      description: Patient gets the id and username only when users are queried by email
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              user_id:
+                type: string
+              username:
+                type: string
+
+  /participantInitiated/filterByMobile:
+    x-swagger-router-controller: filterFunctions/filterByAuthenticatedParams
+    post:
+      operationId: filterByMobile
+      description: Patient can end an HD Voice call using Agora
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              user_id:
+                type: string
+              username:
+                type: string
+
+
+  /participantInitiated/getNearestCity:
+    x-swagger-router-controller: patientInitiated/otherFunctions
+    post:
+      operationId: getNearestCity
+      description: Patient can get the nearest city
+      tags:
+      - Login
+      security:
+        - internalAuthentication: []
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              name:
+                type: string
+              distance:
+                type: string
+              id:
+                type: string
+
+
+  /participantInitiated/getSupportChat:
+    x-swagger-router-controller: patientInitiated/otherFunctions
+    post:
+      operationId: getSupportChatAppointment
+      description: Patient can get the appointment Id for its support Chat
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              appointment_id:
+                type: string
+
+  #####################################
+  # Patient Intiated Appointment Functions
+  ######################################
+  /participantInitiated/leaveAppointment:
+    x-swagger-router-controller: patientInitiated/appointmentFunctions
+    post:
+      operationId: leaveAppointment
+      description: Patient can Leave Appointment
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+
+  /participantInitiated/createSpecialistAppointment:
+    x-swagger-router-controller: patientInitiated/appointmentFunctions
+    post:
+      operationId: createSpecialistAppointment
+      description: Patient can create a Specialist Appointment using this so that he has access to chat
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+              isPatientFirstJoinee:
+                type: string
+
+  /participantInitiated/joinAppointment:
+    x-swagger-router-controller: patientInitiated/appointmentFunctions
+    post:
+      operationId: joinAppointment
+      description: Patient can join Appointment
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+              isPatientFirstJoinee:
+                type: string
+
+  /knowlarity/singleSMS:
+    x-swagger-router-controller: knowlarity/smsFunctions
+    post:
+      operationId: singleSMS
+      description: single SMS can be sent
+      security:
+       - tokenAuthentication: []
+       - internalAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+              fromKnowlarity:
+                type: string
+
+  /knowlarity/multipleSMS:
+    x-swagger-router-controller: knowlarity/smsFunctions
+    post:
+      operationId: multipleSMS
+      description: multiple SMS can be sent
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+              fromKnowlarity:
+                type: string
+
+
+  /knowlarity/groupSMS:
+    x-swagger-router-controller: knowlarity/smsFunctions
+    post:
+      operationId: groupSMS
+      description: SMS can be sent to a group
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+              fromKnowlarity:
+                type: string
+
+  /knowlarity/deliveryStatus:
+    x-swagger-router-controller: knowlarity/smsFunctions
+    post:
+      operationId: deliveryStatus
+      description: Delivery status can be seen about a SMS
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+              fromKnowlarity:
+                type: string
+
+  /knowlarity/balance:
+    x-swagger-router-controller: knowlarity/smsFunctions
+    post:
+      operationId: balance
+      description: Balance can be checked of the account
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+              fromKnowlarity:
+                type: string
+
+
+  /knowlarity/scheduleSMS:
+    x-swagger-router-controller: knowlarity/smsFunctions
+    post:
+      operationId: scheduleSMS
+      description: A SMS can be scheduled
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+              fromKnowlarity:
+                type: string
+
+  /knowlarity/clickToCall:
+    x-swagger-router-controller: knowlarity/voIPFunctions
+    post:
+      operationId: clickToCall
+      description: Click2Call
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+              fromKnowlarity:
+                type: string
+
+
+  /knowlarity/startCampaign:
+    x-swagger-router-controller: knowlarity/voIPFunctions
+    post:
+      operationId: campaign
+      description: Reminder Call
+      security:
+        - tokenAuthentication: []
+        - internalAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+              fromKnowlarity:
+                type: string
+
+
+  /knowlarity/addNumberToCampaign:
+    x-swagger-router-controller: knowlarity/voIPFunctions
+    post:
+      operationId: addNumberCampaign
+      description: Add number to Reminder Call
+      security:
+        - tokenAuthentication: []
+        - internalAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+              fromKnowlarity:
+                type: string
+
+  /knowlarity/shortenLink:
+    x-swagger-router-controller: knowlarity/smsFunctions
+    post:
+      operationId: shortenLink
+      description: Get short link for embedded SMS links
+      tags:
+        - DoctorApp
+      security:
+        - internalAuthentication: []
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              category:
+                type: string
+              appointmentID:
+                type: string
+              eventID:
+                type: string
+              longURL:
+                type: string
+      responses:
+        "200":
+          description: Success
+        "400":
+          description: Neither type or direct link mentioned
+        "503":
+          description: Third-party API call error
+
+  /participantInitiated/consultnow:
+    x-swagger-router-controller: patientInitiated/appointmentFunctions
+    post:
+      operationId: consultnow
+      description: Patient can join Appointment with a GP only
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              appointment_id:
+                type: string
+              isPatientFirstJoinee:
+                type: string
+
+  /participantInitiated/shareLinkAppointment:
+    x-swagger-router-controller: patientInitiated/appointmentFunctions
+    post:
+      operationId: getAppointmentDetailsByUuid
+      description: Patient Family Member can use internal auth to get appointment details by encrypted uuid
+      security:
+        - internalAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              appointment_id:
+                type: string
+              isPatientFirstJoinee:
+                type: string
+
+  /participantInitiated/myBookings:
+    x-swagger-router-controller: patientInitiated/otherFunctions
+    post:
+      operationId: myBookings
+      description: Patient can see his bookings
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              ongoing_bookings:
+                type: string
+              completed_bookings:
+                type: string
+
+  /hostInitiated/consultnow:
+    x-swagger-router-controller: doctorInitiated/appointmentFunctions
+    post:
+      operationId: acceptsConsultation
+      description: Doctor can accept consult now Appointment
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+  /emailNotifications/sendMailByType:
+    x-swagger-router-controller: emailNotifications/allFunctions
+    post:
+      operationId: sendMailByType
+      description: Notification is sent
+      security:
+       - tokenAuthentication: []
+       - internalAuthentication: []
+      tags:
+      - Common
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              email_type:
+                type: string
+              email_meta:
+                type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+  /appNotifications/appointmentBooked:
+    x-swagger-router-controller: appNotifications/allFunctions
+    post:
+      operationId: appointmentBookedNotification
+      description: Notification is sent
+      security:
+       - tokenAuthentication: []
+       - internalAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+  /appNotifications/medicineReminder:
+    x-swagger-router-controller: appNotifications/allFunctions
+    post:
+      operationId: medicineNotification
+      description: Notification is sent
+      security:
+       - tokenAuthentication: []
+       - internalAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+  /appNotifications/appointmentJoiningNotification:
+    x-swagger-router-controller: appNotifications/allFunctions
+    post:
+      operationId: appointmentJoiningNotification
+      description: Notification is sent
+      security:
+       - tokenAuthentication: []
+       - internalAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+
+  #####################################
+  # Authentication Id
+  ######################################
+  /user/authTokens:
+    x-swagger-router-controller: authentications/authFunctions
+    post:
+      operationId: allTokens
+      description: User gets the tokens
+      tags:
+      - Login
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              firebase_token:
+                type: string
+
+  /user/refreshOrmToken:
+    x-swagger-router-controller: authentications/authFunctions
+    post:
+      operationId: refreshOrmToken
+      description: User gets new access token
+      tags:
+      - Login
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              firebase_token:
+                type: string
+  /user/patientFirebaseAccess:
+    x-swagger-router-controller: authentications/authFunctions
+    post:
+      operationId: patientFirebaseAccess
+      description: User gets new access token
+      tags:
+      - Login
+      security:
+       - internalAuthentication: []
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              firebase_token:
+                type: string
+
+  #####################################
+  # Payment Functions
+  ######################################
+  /payment/order:
+    x-swagger-router-controller: patientInitiated/paymentFunctions
+    post:
+      operationId: generateOrder
+      description: User gets the Order Id
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              sub:
+                type: string
+
+  /payment/verify:
+    x-swagger-router-controller: patientInitiated/paymentFunctions
+    post:
+      operationId: verifyPayment
+      description: User gets the Order Id
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+
+  /payment/claimRefund:
+    x-swagger-router-controller: patientInitiated/paymentFunctions
+    post:
+      operationId: claimRefund
+      description: User gets the Order Id
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+
+  /payment/webhook:
+    x-swagger-router-controller: patientInitiated/paymentFunctions
+    post:
+      operationId: webhookCallback
+      description: User gets the webhook
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+  /payment/syncPaymentAppointment:
+    x-swagger-router-controller: patientInitiated/paymentFunctions
+    post:
+      operationId: syncPaymentAppointment
+      description: User gets the webhook
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+  /payment/applycoupon:
+    x-swagger-router-controller: patientInitiated/paymentFunctions
+    post:
+      operationId: applyCoupon
+      description: User applies the Coupon
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+
+  /host/rate:
+    x-swagger-router-controller: patientInitiated/appointmentFunctions
+    post:
+      operationId: updateRating
+      description: User applies the Coupon
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+
+  /patientinitiated/getotp:
+    x-swagger-router-controller: patientInitiated/appointmentFunctions
+    post:
+      operationId: getOtp
+      description: User gets the OTP
+      tags:
+      - DoctorApp
+      - Login
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              OTP:
+                type: string
+
+  /patientinitiated/firstSignUpSMS:
+    x-swagger-router-controller: patientInitiated/appointmentFunctions
+    post:
+      operationId: firstSignUpSMS
+      description: User gets the OTP
+      tags:
+      - DoctorApp
+      - Login
+      - Django
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              OTP:
+                type: string
+
+
+  #####################################
+  # Patient Intiated Shared Link Functions
+  ######################################
+  /participantInitiated/generateLink:
+    x-swagger-router-controller: patientInitiated/sharedLink
+    post:
+      operationId: generateLink
+      description: User can generate a link , a token is provided in the response using which the App generates the link and displays
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              token:
+                type: string
+
+
+  /participantInitiated/giveSharedAccess:
+    x-swagger-router-controller: patientInitiated/sharedLink
+    post:
+      operationId: giveSharedAccess
+      description: When the Relative wants to join after clicking on the link he will be provided with the token
+      security:
+        - internalAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              channel_id:
+                type: string
+
+  /participantInitiated/usedLink:
+    x-swagger-router-controller: patientInitiated/sharedLink
+    post:
+      operationId: usedLink
+      description: Once the patient/relative has used the link the token must expire
+      security:
+        - internalAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+  /participantInitiated/leaveRoom:
+    x-swagger-router-controller: patientInitiated/sharedLink
+    post:
+      operationId: participantLeavesSharedRoom
+      description: The room size should decrease if a participant leaves
+      security:
+        - internalAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+  /common/makepdf:
+    x-swagger-router-controller: pdfMake/pdfMake
+    post:
+      operationId: makePdfForAppointment
+      description: Can make a PDF for the same
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+  /common/makepdfinvoice:
+    x-swagger-router-controller: pdfMake/pdfMake
+    post:
+      operationId: makePdfForInvoice
+      description: Can make a PDF for the same
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+  /adminInitiated/generatePaymentLink:
+    x-swagger-router-controller: adminInitiated/allFunctions
+    post:
+      operationId: paymentLinks
+      description: Can generate a payment Link
+      security:
+        - tokenAuthentication: []
+        - internalAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+
+  /adminInitiated/getPaymentDetails:
+    x-swagger-router-controller: adminInitiated/allFunctions
+    post:
+      operationId: giveNextSevenDaysPayments
+      description: Can analyze payments
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+  /adminInitiated/resetdoctorpassword:
+    x-swagger-router-controller: adminInitiated/allFunctions
+    post:
+      operationId: resetDoctorPassword
+      description: Can reset Credential
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+  /adminInitiated/resetpatientmobile:
+    x-swagger-router-controller: adminInitiated/allFunctions
+    post:
+      operationId: resetPatientMobile
+      description: Can reset Credentials
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+
+  /adminInitiated/resetpatientemail:
+    x-swagger-router-controller: adminInitiated/allFunctions
+    post:
+      operationId: resetPatientEmail
+      description: Can reset Credentials
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+  /adminInitiated/analyticsPage:
+    x-swagger-router-controller: adminInitiated/allFunctions
+    post:
+      operationId: analyticsPage
+      description: Analytics Page 3 in 1 page
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+  /adminIntitiated/createDynamicLinksForReferrers:
+    x-swagger-router-controller: adminInitiated/firebaseDynamicLinks
+    post:
+      operationId: createDynamicLinksForReferrers
+      description: Creates dynamic array from a given json object array with referrer ids
+      security:
+        - tokenAuthentication: []
+      tags:
+      - AdminPanel
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              referrerDeepLinks:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    referredId:
+                      type: number
+      responses:
+        "500":
+          description: "Internal Server Error"
+        "200":
+          description: "Successful"
+
+  /adminIntitiated/getLinkAnalytics:
+    x-swagger-router-controller: adminInitiated/firebaseDynamicLinks
+    post:
+      operationId: getAnalytics
+      description: Creates dynamic array from a given json object array
+      security:
+        - tokenAuthentication: []
+      tags:
+      - AdminPanel
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              dynamicLink:
+                type: string
+                format: uri
+              
+      responses:
+        "500":
+          description: "Internal Server Error"
+        "200":
+          description: "Successful"
+
+  /payment/diagnosticOrder:
+    x-swagger-router-controller: patientInitiated/paymentFunctions
+    post:
+      operationId: generateDiagnosticOrder
+      description: Can generate Diagnostic Order and Payments
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+  /test/function:
+    x-swagger-router-controller: adminInitiated/allFunctions
+    post:
+      operationId: testFunction
+      description: TEST
+      security:
+        - tokenAuthentication: []
+      tags:
+      - DoctorApp
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              message:
+                type: string
+
+#####################################
+# Report
+######################################
+  /dashboard/reportExport:
+    x-swagger-router-controller: dashboard/reportExport
+    post:
+      operationId: exportExcel
+      description: CurerTech Reports
+      security:
+        - tokenAuthentication: []
+      tags:
+      - Admin
+      parameters:
+        - in: body
+          name: body
+          schema:
+            properties:
+              dateTo:
+                type: string
+              dateFrom:
+                type: string
+              type:
+                type: string
+              filters:
+                type: object
+                properties:
+                  coffeeMachine:
+                    type: number
+                  cafe:
+                    type: number
+                  city:
+                    type: number
+                  zone:
+                    type: number
+
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: file
+
+#####################################
+# Home-care APIs
+#####################################
+
+  /customerQueries/getRecordsAsSheet:
+    x-swagger-router-controller: customerQueries/renderToSheet
+    get:
+      operationId: getRecordsAsSheet
+      description: Fetch customer query records as sheet uploaded to AWS
+      security:
+        - tokenAuthentication: []
+        - internalAuthentication: []
+      tags:
+        - Admin
+      parameters:
+        - in: query
+          name: startDate
+          type: string
+          description: Date in format YYYY-MM-DD
+          required: false
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: object
+        "500":
+          description: Failure
+          schema:
+            type: object
+
+#####################################
+# Common APIs across Projects
+######################################
+  /common/uploadInvoicesToS3:
+    x-swagger-router-controller: common/invoicesUpload
+    post:
+      operationId: uploadInvoicesToS3
+      description: Upload All Appointment Invoices To S3 in Ordered Way
+      security:
+        - tokenAuthentication: []
+        - internalAuthentication: []
+      tags:
+        - Common
+      parameters:
+        - in: body
+          name: dates(yyyy-mm-dd)
+          schema:
+            properties:
+              start_date:
+                type: string
+              end_date:
+                type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: object
+        "500":
+          description: Failure
+          schema:
+            type: object
+
+  /common/fileUpload:
+    x-swagger-router-controller: common/s3Upload
+    post:
+      operationId: fileUpload
+      description: Upload file
+      security:
+        - tokenAuthentication: []
+      tags:
+      - Common
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: file
+          in: formData
+          description: file object
+          type: file
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: object
+
+  /common/uploadFileByName:
+    x-swagger-router-controller: common/s3Upload
+    post:
+      operationId: uploadFileByName
+      description: upload file directly by name as input
+      security:
+        - tokenAuthentication: []
+      tags:
+        - Common
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: file
+          in: formData
+          description: file object
+          type: file
+      responses:
+        "200":
+          description: success
+          schema:
+            type: object
+
+  /common/saveManualPrescription:
+    x-swagger-router-controller: common/s3Upload
+    post:
+      operationId: saveManualPrescription
+      description: Upload image and converted PDF to AWS and return their URLs
+      security:
+        - tokenAuthentication: []
+      tags:
+        - Common
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: file
+          in: formData
+          description: Image prescription
+          type: file
+      responses:
+        "200":
+          description: success
+          schema:
+            type: object
+
+tags:
+  - name: Login
+    description: Login API
+  - name: Common
+    description: Common APIs across multiple projects
+  - name: Admin
+    description: Admin Dashboard APIs
+  - name: DoctorApp
+    description: DoctorApp Web APIs
+  - name: Django
+    description: Django APIs
+
+securityDefinitions:
+  tokenAuthentication:
+    description: "User Authentication Service"
+    type: apiKey
+    name: Authorization
+    in: header
+  internalAuthentication:
+    description: "Public Authentication Service"
+    type: apiKey
+    name: Public-Key
+    in: header
