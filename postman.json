@@ -6,58 +6,11 @@
   },
   "item": [
     {
-      "name": "Bidder",
-      "item": [
-        {
-          "name": "INTERNAL: Get Bid Price",
-          "id": "3c2b9553-c112-4093-b616-a7cb6c278996",
-          "protocolProfileBehavior": { "disableBodyPruning": true },
-          "request": {
-            "method": "GET",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "",
-              "options": { "raw": { "language": "json" } }
-            },
-            "url": "{{bidder_url}}/getBidPrice/1"
-          },
-          "response": []
-        },
-        {
-          "name": "Add Bidder",
-          "id": "40483f61-bb58-408a-bf42-0a942c6ccb13",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"Id\": 4,\r\n    \"Delay\": 200\r\n}",
-              "options": { "raw": { "language": "json" } }
-            },
-            "url": "{{bidder_url}}/addBidder"
-          },
-          "response": []
-        },
-        {
-          "name": "Remove Bidder",
-          "id": "f51950a9-1b1f-4f73-a9e8-fbea5bd73a1f",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": "{{bidder_url}}/removeBidder/3"
-          },
-          "response": []
-        }
-      ],
-      "id": "7360204d-1e5d-4923-a89f-9ee09b9c37c3"
-    },
-    {
       "name": "Auctioneer",
       "item": [
         {
           "name": "Start Auction",
-          "id": "77582445-e888-4ea2-9ee1-75387cc8a827",
+          "id": "b380896d-35bd-4dac-82ca-3f750709711b",
           "protocolProfileBehavior": { "disableBodyPruning": true },
           "request": {
             "method": "GET",
@@ -67,7 +20,7 @@
               "raw": "",
               "options": { "raw": { "language": "json" } }
             },
-            "url": "{{bidder_url}}/startAuction"
+            "url": "http://localhost:3000/startAuction"
           },
           "response": []
         },
@@ -82,7 +35,7 @@
               "raw": "{\r\n    \"Id\": 2,\r\n    \"Delay\": 50\r\n}",
               "options": { "raw": { "language": "json" } }
             },
-            "url": "{{bidder_url}}/register/2"
+            "url": "http://localhost:3000/register/4"
           },
           "response": []
         },
@@ -92,12 +45,59 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{bidder_url}}/deregister/2"
+            "url": "http://localhost:3000/deregister/1"
           },
           "response": []
         }
       ],
       "id": "184d1e53-bd65-4255-b8b8-70b72db444cb"
+    },
+    {
+      "name": "Bidder",
+      "item": [
+        {
+          "name": "INTERNAL: Get Bid Price",
+          "id": "3c2b9553-c112-4093-b616-a7cb6c278996",
+          "protocolProfileBehavior": { "disableBodyPruning": true },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "http://localhost:3001/getBidPrice/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Bidder",
+          "id": "40483f61-bb58-408a-bf42-0a942c6ccb13",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"Id\": 2,\r\n    \"Delay\": 50\r\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "http://localhost:3001/addBidder"
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Bidder",
+          "id": "f51950a9-1b1f-4f73-a9e8-fbea5bd73a1f",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3001/removeBidder/3"
+          },
+          "response": []
+        }
+      ],
+      "id": "7360204d-1e5d-4923-a89f-9ee09b9c37c3"
     }
   ]
 }
