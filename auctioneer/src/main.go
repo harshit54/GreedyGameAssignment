@@ -32,6 +32,6 @@ func main() {
 		Addr:    "127.0.0.1:8000",
 	}
 
-	fmt.Println("Starting Auctioneer Service At Port 8000"
+	fmt.Println("Starting Auctioneer Service At Port 8000")
 	log.Fatal(srv.ListenAndServe())
 }

@@ -66,7 +66,7 @@ func getBidPrice(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	biddersData = make(map[int]int)
-	AUCTIONEER_URL = "http://127.0.0.1:" + goDotEnvVariable("AUCTIONEER_PORT")
+	AUCTIONEER_URL = "http://127.0.0.1:8000"
 
 	router := mux.NewRouter()
 

@@ -11,5 +11,5 @@ RUN go build -o ./bin/app ./src
 
 FROM debian:latest AS production
 COPY --from=builder app .
-EXPOSE 3000
 ENTRYPOINT ["app"]
+EXPOSE 3000
