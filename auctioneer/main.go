@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
-	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -85,15 +84,20 @@ func main() {
 	BIDDER_URL = "http://127.0.0.1:" + goDotEnvVariable("BIDDER_PORT")
 
 	router := mux.NewRouter()
+
 	router.HandleFunc("/startAuction", startAuction)
 	router.HandleFunc("/register/{BidderId}", register)
 	router.HandleFunc("/deregister/{BidderId}", deregister)
 
+	fs := http.FileServer(http.Dir("./swagger/"))
+	router.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", fs))
+
+	fs2 := http.FileServer(http.Dir("./static/"))
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs2))
+
 	srv := &http.Server{
-		Handler:      router,
-		Addr:         "127.0.0.1:" + goDotEnvVariable("AUCTIONEER_PORT"),
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
+		Handler: router,
+		Addr:    "127.0.0.1:" + goDotEnvVariable("AUCTIONEER_PORT"),
 	}
 
 	fmt.Println("Starting Auctioneer Service At Port " + goDotEnvVariable("AUCTIONEER_PORT"))
