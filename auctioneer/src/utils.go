@@ -31,7 +31,7 @@ func getBidValue(bidderId int) BidResponse {
 	var b BidResponse
 	fmt.Println("Hitting:", BIDDER_URL+"/getBidPrice/"+strconv.Itoa(bidderId))
 	res, err1 := client.Get(BIDDER_URL + "/getBidPrice/" + strconv.Itoa(bidderId))
-	if os.IsTimeout(err1) {
+	if os.IsTimeout(err1) || err1 != nil {
 		fmt.Println(bidderId, "Timed Out!")
 		b.BidderId = -1
 		b.Value = -1

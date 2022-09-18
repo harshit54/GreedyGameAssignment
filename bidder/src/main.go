@@ -13,7 +13,7 @@ var biddersData map[int]int
 
 func main() {
 	biddersData = make(map[int]int)
-	AUCTIONEER_URL = "http://10.5.0.6:3000"
+	AUCTIONEER_URL = "http://10.5.0.5:3000"
 
 	router := mux.NewRouter()
 

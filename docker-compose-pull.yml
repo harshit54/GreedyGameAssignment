@@ -1,25 +1,24 @@
-version: "3.9"  # optional since v1.27.0
+version: "3.9" # optional since v1.27.0
 services:
+  auctioneer:
+    image: harshit54/greedygame-auctioneer
+    ports:
+      - "3000:3000"
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.5
   bidder:
     image: harshit54/greedygame-bidder
     networks:
       vpcbr:
-        ipv4_address: 10.5.0.5
+        ipv4_address: 10.5.0.6
     ports:
       - "3001:3001"
-
-  auctioneer:
-    image: harshit54/greedygame-auctioneer
-    ports:
-      - "3000:3000"   
-    networks:
-      vpcbr:
-        ipv4_address: 10.5.0.6   
 
 networks:
   vpcbr:
     driver: bridge
     ipam:
-     config:
-       - subnet: 10.5.0.0/16
-         gateway: 10.5.0.1
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
