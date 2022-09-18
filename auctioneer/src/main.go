@@ -16,7 +16,7 @@ var maxBidderId int
 
 func main() {
 	bidderIds = make(map[int]struct{})
-	BIDDER_URL = "http://10.5.0.5:3001"
+	BIDDER_URL = "http://172.22.0.3:3001"
 
 	router := mux.NewRouter()
 
