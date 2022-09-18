@@ -1,0 +1,103 @@
+{
+  "info": {
+    "_postman_id": "75398a53-a2b4-4454-b8ed-7441c3b0e9ad",
+    "name": "GreedyGame",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Bidder",
+      "item": [
+        {
+          "name": "INTERNAL: Get Bid Price",
+          "id": "3c2b9553-c112-4093-b616-a7cb6c278996",
+          "protocolProfileBehavior": { "disableBodyPruning": true },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{bidder_url}}/getBidPrice/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Bidder",
+          "id": "40483f61-bb58-408a-bf42-0a942c6ccb13",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"Id\": 4,\r\n    \"Delay\": 200\r\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{bidder_url}}/addBidder"
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Bidder",
+          "id": "f51950a9-1b1f-4f73-a9e8-fbea5bd73a1f",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{bidder_url}}/removeBidder/3"
+          },
+          "response": []
+        }
+      ],
+      "id": "7360204d-1e5d-4923-a89f-9ee09b9c37c3"
+    },
+    {
+      "name": "Auctioneer",
+      "item": [
+        {
+          "name": "Start Auction",
+          "id": "77582445-e888-4ea2-9ee1-75387cc8a827",
+          "protocolProfileBehavior": { "disableBodyPruning": true },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{bidder_url}}/startAuction"
+          },
+          "response": []
+        },
+        {
+          "name": "INTERNAL: Register",
+          "id": "3ce557cb-570a-4466-893e-737296301aca",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"Id\": 2,\r\n    \"Delay\": 50\r\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{bidder_url}}/register/2"
+          },
+          "response": []
+        },
+        {
+          "name": "INTERNAL: Deregister",
+          "id": "dc8d9aa7-376d-40d4-b9d0-0a22891a08e1",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{bidder_url}}/deregister/2"
+          },
+          "response": []
+        }
+      ],
+      "id": "184d1e53-bd65-4255-b8b8-70b72db444cb"
+    }
+  ]
+}

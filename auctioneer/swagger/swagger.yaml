@@ -1,0 +1,154 @@
+openapi: 3.0.3
+info:
+  title: GreedyGame Backend Assignment
+  description: |-
+    This is a list of all the APIs being used by the two Services Bidder and Auctioneer
+    
+    By default the 
+    
+    Auctioneer Service - Port 8000
+    
+    Bidder Service - Port 3000
+
+    Run Here: https://www.getpostman.com/collections/3072868d05ce8b4c533c
+  contact:
+    email: harshitjoshi112@gmail.com
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+  - url: http://localhost:3000
+tags:
+  - name: Auctioneer
+    description: APIs Used By The Auctioneer Service
+  - name: Bidder
+    description: APIs Used By The Bidder Service
+
+paths:
+  /register/{bidderId}:
+    post:
+      tags:
+        - Auctioneer
+      summary: INTERNAL, Used By Bidder Service To Register A Bidder To The Auctioneer
+      operationId: register
+      parameters:
+        - name: bidderId
+          in: path
+          description: ID of Bidder To Register
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successfully Registered
+        '400':
+          description: Invalid status value
+  /deregister/{bidderId}:
+    delete:
+      tags:
+        - Auctioneer
+      summary: INTERNAL, Used By Bidder Service To Deregister A Bidder From The Auctioneer
+      operationId: deregister
+      parameters:
+        - name: bidderId
+          in: path
+          description: ID of Bidder To Register
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successfully Registered
+        '400':
+          description: Invalid status value
+  /startAuction:
+    get:
+      tags:
+        - Auctioneer
+      summary: Used By Client To Start An Auction
+      operationId: startAuction
+      responses:
+        '200':
+          description: Successfully Registered
+        '400':
+          description: Invalid status value
+  /addBidder/:
+    post:
+      tags:
+        - Bidder
+      summary: Used By Client To Add A Bidder To The Bidder Microservice Service
+      operationId: addBidder
+      requestBody:
+        description: Update an existent user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Bidder'
+      responses:
+        '200':
+          description: Successfully Registered
+        '400':
+          description: Invalid status value
+  
+  /removeBidder/{bidderId}:
+    delete:
+      tags:
+        - Bidder
+      summary: Used By Client To Remove A Bidder From The Bidder Microservice Service
+      operationId: removeBidder
+      parameters:
+        - name: bidderId
+          in: path
+          description: ID of Bidder To Register
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successfully Registered
+        '400':
+          description: Invalid status value
+  
+  /getBidPrice:
+    get:
+      tags:
+        - Bidder
+      summary: INTERNAL, Used By Bidder Service To Deregister A Bidder From The Auctioneer
+      operationId: getBidPrice
+      responses:
+        '200':
+          description: Successfully Completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BidResponse'
+        '400':
+          description: Invalid status value
+          
+
+components:
+  schemas:
+    Bidder:
+      type: object
+      properties:
+        BidderId:
+          type: integer
+          format: int64
+          example: 10
+        Delay:
+          type: integer
+          minimum: 10
+          maximum: 500
+          format: int64
+    BidResponse:
+      type: object
+      properties:
+        BidderId:
+          type: integer
+          format: int64
+          example: 10
+        Value:
+          type: integer
+          format: int64
