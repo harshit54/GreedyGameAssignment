@@ -1,10 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -12,8 +15,7 @@ import (
 
 var bidderIds map[int]struct{}
 var exists = struct{}{}
-
-var PORT string
+var BIDDER_URL string
 
 type Bidder struct {
 	Id    int
@@ -25,16 +27,12 @@ func register(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	idStr := vars["BidderId"]
 	id, _ := strconv.Atoi(idStr)
-	if _, ok := bidderIds[id]; ok {
-		bidderIds[id] = exists
-		fmt.Println("Added " + idStr + " To Auctioneer")
-	} else {
-		w.WriteHeader(404)
-		fmt.Fprintf(w, "Bidder Not Found")
-	}
+	bidderIds[id] = exists
+	fmt.Println("Added " + idStr + " To Auctioneer")
+	w.WriteHeader(200)
 }
 
-func deRegister(w http.ResponseWriter, req *http.Request) {
+func deregister(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	idStr := vars["BidderId"]
 	id, _ := strconv.Atoi(idStr)
@@ -43,29 +41,61 @@ func deRegister(w http.ResponseWriter, req *http.Request) {
 		fmt.Println("Deleted " + idStr + " From Auctioneer")
 	} else {
 		w.WriteHeader(404)
-		fmt.Fprintf(w, "Bidder Not Found")
+		fmt.Println("Bidder Not Found")
 	}
 }
 
+var maxBidValue int
+var maxBidderId int
+
+func calculateMaxBid(id int, wg *sync.WaitGroup, m *sync.Mutex) {
+	bidValue := getBidValue(id)
+	m.Lock()
+	if bidValue.Value > maxBidValue {
+		maxBidValue = bidValue.Value
+		maxBidderId = id
+	}
+	m.Unlock()
+	wg.Done()
+}
+
 func startAuction(w http.ResponseWriter, req *http.Request) {
-	//Goto All Bidders And Ping Them Simultaneously
+	maxBidValue = math.MinInt64
+	var wg sync.WaitGroup
+	var m sync.Mutex
+	wg.Add(len(bidderIds))
+	for id, _ := range bidderIds {
+		go calculateMaxBid(id, &wg, &m)
+	}
+	wg.Wait()
+	var b BidResponse
+	b.BidderId = maxBidderId
+	b.Value = maxBidValue
+	if b.BidderId == -1 {
+		w.WriteHeader(504)
+		return
+	} else {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(b)
+	}
 }
 
 func main() {
 	bidderIds = make(map[int]struct{})
+	BIDDER_URL = "http://127.0.0.1:" + goDotEnvVariable("BIDDER_PORT")
 
 	router := mux.NewRouter()
-
 	router.HandleFunc("/startAuction", startAuction)
-	router.HandleFunc("/register", register)
-	router.HandleFunc("/deRegister/{BidderId}", deRegister)
+	router.HandleFunc("/register/{BidderId}", register)
+	router.HandleFunc("/deregister/{BidderId}", deregister)
 
 	srv := &http.Server{
 		Handler:      router,
-		Addr:         "127.0.0.1:3000",
+		Addr:         "127.0.0.1:" + goDotEnvVariable("AUCTIONEER_PORT"),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
-	fmt.Println("Starting Server...")
+
+	fmt.Println("Starting Auctioneer Service At Port " + goDotEnvVariable("AUCTIONEER_PORT"))
 	log.Fatal(srv.ListenAndServe())
 }

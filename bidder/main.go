@@ -25,11 +25,10 @@ func addBidder(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err1.Error(), http.StatusBadRequest)
 		return
 	}
-	//TODO: Register Bidder To Auctioneer
-	// http.Post(AUCTIONEER_URL+"/registration", "application/json", bytes.NewBuffer(json_data))
-
+	http.Get(AUCTIONEER_URL + "/register/" + strconv.Itoa(b.Id))
 	biddersData[b.Id] = b.Delay
 	fmt.Fprintln(w, strconv.Itoa(b.Id)+" Successfully Added!")
+	fmt.Println(strconv.Itoa(b.Id) + " Successfully Added!")
 }
 
 func removeBidder(w http.ResponseWriter, req *http.Request) {
@@ -38,9 +37,10 @@ func removeBidder(w http.ResponseWriter, req *http.Request) {
 	id, _ := strconv.Atoi(idStr)
 	if _, ok := biddersData[id]; ok {
 		delete(biddersData, id)
+		fmt.Println("Hitting:", AUCTIONEER_URL+"/deregister/"+idStr)
+		http.Get(AUCTIONEER_URL + "/deregister/" + idStr)
+		fmt.Println(idStr + " Removed Successfully")
 		fmt.Fprintf(w, idStr+" Removed Successfully")
-		//TODO: Remove Bidder From Auctioneer
-		// http.Post(AUCTIONEER_URL+"/registration", "application/json", bytes.NewBuffer(json_data))
 	} else {
 		w.WriteHeader(404)
 		fmt.Fprintf(w, "Bidder Not Found")
@@ -56,6 +56,7 @@ func getBidPrice(w http.ResponseWriter, req *http.Request) {
 		b.Value = bidGenerator(val)
 		b.BidderId = id
 		w.Header().Set("Content-Type", "application/json")
+		fmt.Println("Bid Response:", b, "With Coded Delay:", biddersData[id], "ms")
 		json.NewEncoder(w).Encode(b)
 	} else {
 		w.WriteHeader(404)
@@ -65,6 +66,7 @@ func getBidPrice(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	biddersData = make(map[int]int)
+	AUCTIONEER_URL = "http://127.0.0.1:" + goDotEnvVariable("AUCTIONEER_PORT")
 
 	router := mux.NewRouter()
 
@@ -74,10 +76,10 @@ func main() {
 
 	srv := &http.Server{
 		Handler:      router,
-		Addr:         "127.0.0.1:8000",
+		Addr:         "127.0.0.1:" + goDotEnvVariable("BIDDER_PORT"),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
-	fmt.Println("Starting Server...")
+	fmt.Println("Starting Bidder Service At Port " + goDotEnvVariable("BIDDER_PORT"))
 	log.Fatal(srv.ListenAndServe())
 }

@@ -7,9 +7,5 @@ import (
 var bids map[string]int
 
 func mai3n() {
-	bids = make(map[string]int)
-	bids["hell"] = 12
-	fmt.Println(bids["hell"])
-	delete(bids, "hell")
-	fmt.Println(bids["hell"])
+	fmt.Println(goDotEnvVariable("AUCTIONEER_PORT"))
 }
